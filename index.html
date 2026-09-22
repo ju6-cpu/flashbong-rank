@@ -886,11 +886,11 @@ footer {
 
         async function saveRankingsToCloud() {
             try {
-                // 저장 직전 각 유저의 현재 '계산된 공동 등수'를 기존 prevRank로 확정 백업
+                // 중요:
+                // prevRank는 '이번 변경 직전 순위'를 의미하므로,
+                // 저장 직전에 현재 순위로 덮어쓰면 순위 변동 화살표가 사라집니다.
+                // prevRank는 savePlayerRecord()에서 변경 직전에 이미 백업합니다.
                 calculateRanks();
-                rankings.forEach(p => {
-                    p.prevRank = p.calculatedRank;
-                });
 
                 updatedAt = getFormattedDate();
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
@@ -1006,8 +1006,11 @@ footer {
                     existing.link = link;
                     existing.comment = comment;
                 } else {
-                    // 신규 유저 등록 시: 현재 가장 마지막 등수(또는 1등)를 기준으로 prevRank를 잡아주어 첫 등록 시 화살표 오작동 방지
-                    const defaultNewRank = rankings.length > 0 ? rankings[rankings.length - 1].calculatedRank : 1;
+                    // 신규 유저는 등록 직전 마지막 순위를 기준으로 시작합니다.
+                    // 이후 calculateRanks()에서 실제 현재 순위를 계산하여 변동 화살표를 표시합니다.
+                    const defaultNewRank = rankings.length > 0
+                        ? rankings[rankings.length - 1].calculatedRank
+                        : 1;
                     rankings.push({ name, score, link, comment, prevRank: defaultNewRank });
                 }
             } else {
@@ -1071,13 +1074,18 @@ footer {
                     commentClass = "comment-3";
                 }
 
-                // 순위 변동 비교 (현재 등수 displayRank와 이전 등수 player.prevRank 비교)
-                let diffHtml = `<span class="rank-diff diff-same">-</span>`;
-                if (player.prevRank !== undefined) {
-                    if (displayRank < player.prevRank) {
-                        diffHtml = `<span class="rank-diff diff-up" title="상승">▲</span>`;
-                    } else if (displayRank > player.prevRank) {
-                        diffHtml = `<span class="rank-diff diff-down" title="하락">▼</span>`;
+                // 순위 변동 비교
+                // prevRank = 이번 변경 직전 순위
+                // calculatedRank = 현재 점수 기준 순위
+                let diffHtml = `<span class="rank-diff diff-same" title="순위 변동 없음">-</span>`;
+                const previousRank = Number(player.prevRank);
+                const currentRank = Number(displayRank);
+
+                if (Number.isFinite(previousRank) && Number.isFinite(currentRank)) {
+                    if (currentRank < previousRank) {
+                        diffHtml = `<span class="rank-diff diff-up" title="${previousRank}위 → ${currentRank}위">▲</span>`;
+                    } else if (currentRank > previousRank) {
+                        diffHtml = `<span class="rank-diff diff-down" title="${previousRank}위 → ${currentRank}위">▼</span>`;
                     }
                 }
 
