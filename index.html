@@ -876,30 +876,31 @@ footer {
                     headers: { 'X-Master-Key': API_KEY },
                     cache: 'no-store'
                 });
-                const data = await response.json();
-                
-                if (data.record && data.record.rankings && data.record.rankings.length > 0) {
-                    rankings = data.record.rankings;
-                    updatedAt = data.record.updatedAt || "2026/09/11 22:00";
-                    // 서버 데이터가 정상이면 내부 기본값도 최신화
-                    defaultRankings = JSON.parse(JSON.stringify(rankings));
-                    calculateRanks();
-                } else {
-                    rankings = JSON.parse(JSON.stringify(defaultRankings));
-                    calculateRanks();
-                    updatedAt = getFormattedDate();
+
+                if (!response.ok) {
+                    throw new Error(`JSONBin 불러오기 실패: HTTP ${response.status}`);
                 }
-                
-                updateHeaderInfo();
-                renderRankings();
-                if (document.getElementById("adminPanel").style.display === "block") {
-                    updatePlayerSelectOptions();
+
+                const data = await response.json();
+
+                if (data.record && Array.isArray(data.record.rankings)) {
+                    // JSONBin을 실제 데이터의 원본으로 사용
+                    rankings = data.record.rankings;
+                    updatedAt = data.record.updatedAt || getFormattedDate();
+                    calculateRanks();
+
+                    updateHeaderInfo();
+                    renderRankings();
+                    if (document.getElementById("adminPanel").style.display === "block") {
+                        updatePlayerSelectOptions();
+                    }
+                } else {
+                    // 서버 데이터가 비정상이면 기존 화면 데이터를 건드리지 않음
+                    throw new Error("JSONBin에 정상적인 rankings 데이터가 없습니다.");
                 }
             } catch (error) {
                 console.error("데이터 로드 실패:", error);
-                rankings = JSON.parse(JSON.stringify(defaultRankings));
-                calculateRanks();
-                renderRankings();
+                alert("클라우드 데이터를 불러오지 못했습니다.\n기존 데이터를 기본값으로 덮어쓰지 않았습니다.\n\n" + error.message);
             }
         }
 
@@ -922,31 +923,52 @@ footer {
         async function saveRankingsToCloud() {
             try {
                 calculateRanks();
-                updatedAt = getFormattedDate();
+                const saveTime = getFormattedDate();
+
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-Master-Key': API_KEY
                     },
-                    body: JSON.stringify({ rankings: rankings, updatedAt: updatedAt })
+                    body: JSON.stringify({ rankings: rankings, updatedAt: saveTime })
                 });
 
-                if (response.ok) {
-                    // [핵심 반영] 서버 저장 성공 시, 코드 내부의 defaultRankings 기본값도 즉시 최신화됨!
-                    defaultRankings = JSON.parse(JSON.stringify(rankings));
-                    
-                    updateHeaderInfo();
-                    renderRankings();
-                    updatePlayerSelectOptions();
-                    alert("랭킹 데이터가 클라우드에 반영되었으며, 코드 기본값도 최신화되었습니다!");
+                if (!response.ok) {
+                    const errorBody = await response.text().catch(() => "");
+                    throw new Error(`저장 실패: HTTP ${response.status}${errorBody ? " - " + errorBody : ""}`);
                 }
+
+                // 저장 성공 후 JSONBin에서 다시 읽어 실제 저장 여부 확인
+                const verifyResponse = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY },
+                    cache: 'no-store'
+                });
+
+                if (!verifyResponse.ok) {
+                    throw new Error(`저장 확인 실패: HTTP ${verifyResponse.status}`);
+                }
+
+                const verifyData = await verifyResponse.json();
+
+                if (!verifyData.record || !Array.isArray(verifyData.record.rankings)) {
+                    throw new Error("저장 확인 결과에 rankings 데이터가 없습니다.");
+                }
+
+                rankings = verifyData.record.rankings;
+                updatedAt = verifyData.record.updatedAt || saveTime;
+                calculateRanks();
+
+                updateHeaderInfo();
+                renderRankings();
+                updatePlayerSelectOptions();
+
+                alert("랭킹 데이터가 클라우드에 저장되었습니다.");
             } catch (error) {
                 console.error("데이터 저장 실패:", error);
-                alert("저장 중 오류가 발생했습니다.");
+                alert("저장에 실패했습니다.\n현재 화면의 데이터는 기본값으로 되돌리지 않았습니다.\n\n" + error.message);
             }
         }
-
         function getFormattedDate() {
             const now = new Date();
             const yyyy = now.getFullYear();
