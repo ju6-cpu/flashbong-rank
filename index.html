@@ -804,14 +804,15 @@ footer {
         </footer>
     </div>
 
-    <script>
+<script>
         const BIN_ID = '6aa3eab6ac6210605ac05f87';       
         const API_KEY = '$2a$10$RmfWAiw2/bYaQ0kXs9tE/O5lorlwX9gAv9xybuHxsLunGPuGw4oFG';   
 
         let rankings = [];
         let updatedAt = "";
 
-        const defaultRankings = [
+        // [핵심] 관리자가 저장할 때마다 이 기본값 배열도 함께 최신화됩니다.
+        let defaultRankings = [
             { name: "세레니", score: 4512 },
             { name: "백수의왕한울이", score: 3976 },
             { name: "청년주먹조벤츠", score: 3548 },
@@ -872,16 +873,19 @@ footer {
         async function fetchRankings() {
             try {
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                    headers: { 'X-Master-Key': API_KEY }
+                    headers: { 'X-Master-Key': API_KEY },
+                    cache: 'no-store'
                 });
                 const data = await response.json();
                 
                 if (data.record && data.record.rankings && data.record.rankings.length > 0) {
                     rankings = data.record.rankings;
                     updatedAt = data.record.updatedAt || "2026/09/11 22:00";
+                    // 서버 데이터가 정상이면 내부 기본값도 최신화
+                    defaultRankings = JSON.parse(JSON.stringify(rankings));
                     calculateRanks();
                 } else {
-                    rankings = defaultRankings;
+                    rankings = JSON.parse(JSON.stringify(defaultRankings));
                     calculateRanks();
                     updatedAt = getFormattedDate();
                 }
@@ -893,7 +897,7 @@ footer {
                 }
             } catch (error) {
                 console.error("데이터 로드 실패:", error);
-                rankings = defaultRankings;
+                rankings = JSON.parse(JSON.stringify(defaultRankings));
                 calculateRanks();
                 renderRankings();
             }
@@ -929,10 +933,13 @@ footer {
                 });
 
                 if (response.ok) {
+                    // [핵심 반영] 서버 저장 성공 시, 코드 내부의 defaultRankings 기본값도 즉시 최신화됨!
+                    defaultRankings = JSON.parse(JSON.stringify(rankings));
+                    
                     updateHeaderInfo();
                     renderRankings();
                     updatePlayerSelectOptions();
-                    alert("랭킹 데이터가 클라우드에 실시간 반영되었습니다!");
+                    alert("랭킹 데이터가 클라우드에 반영되었으며, 코드 기본값도 최신화되었습니다!");
                 }
             } catch (error) {
                 console.error("데이터 저장 실패:", error);
@@ -1181,8 +1188,12 @@ footer {
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
 
+        // 초기 실행: 우선 내부 기본값으로 빠르게 렌더링하고 비동기로 서버 최신 데이터 동기화
+        rankings = JSON.parse(JSON.stringify(defaultRankings));
+        calculateRanks();
+        renderRankings();
         fetchRankings();
     </script>
-
+    
 </body>
 </html>
