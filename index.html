@@ -226,7 +226,7 @@ label {
     padding-left: 2px;
 }
 
-input, select {
+input, select, textarea {
     width: 100%;
     padding: 11px 12px;
     background-color: rgba(5,10,18,.8);
@@ -239,9 +239,9 @@ input, select {
     transition: .18s ease;
 }
 
-input::placeholder { color: #56657a; }
+input::placeholder, textarea::placeholder { color: #56657a; }
 
-input:focus, select:focus {
+input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: rgba(56,189,248,.62);
     box-shadow: 0 0 0 3px rgba(56,189,248,.08);
@@ -264,6 +264,33 @@ input:focus, select:focus {
 }
 
 .btn-submit:active { transform: translateY(1px); filter: brightness(.94); }
+
+.backup-section {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(255,255,255,.1);
+}
+
+.backup-btns {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.btn-backup {
+    flex: 1;
+    padding: 10px;
+    background: rgba(56,189,248,.12);
+    color: var(--boss-blue);
+    border: 1px solid rgba(56,189,248,.3);
+    border-radius: 9px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-family: 'Gowun Dodum', sans-serif;
+}
+
+.btn-backup:active { background: rgba(56,189,248,.22); }
 
 /* ---------- Ranking ---------- */
 .search-box {
@@ -707,9 +734,9 @@ footer {
             <div class="collab-text">[관리자 : 초봉식쉼터 물갈이 x 방장 민시은 콜라보]</div>
             
             <div class="monster-scene" aria-hidden="true">
-                <div class="pixel-stars">✦　·　✦　　·　✦</div>
-                <div class="monster-ground">                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAAA8BAMAAAAj5X9CAAAALVBMVEUAAAAAAAAR0mMAq3gm/2YRdUIKQCQqLkU7Bxt4SDWGZ0bl3dOaflD/7B+CEDsgW3UxAAAAAnRSTlMAZtJCCVUAAAEcSURBVDjLtdOxSsRAEMbxU9DGxlT2kzvr48bzAby1l5PRysLCQREsLFywFwI+QcDWwjyBkFew1DKv4DPcN7sHKe7Kyb9YQvZXLNnJCPGMQopKHm3kAHbXu73xBnaABfdi4Q/kkhGNQzgXFM6Ip86g/a6q91aWRMfa/fkDa18r9CZ8qnpnQC4GAShPhSvo03sDsjRANAx4+s/AKhnBDAd4lta5eIKDVh9bXJO9ZyY0DmAYRTewJ5wSdB3jcwInZnjqA/JI5DLA79n9mqGJeIFs6o+f5tPOkwdDbjoqcWtuIMZo4KsWkfwxwZidgT7UMHiwkZiIzd5cHEGBjmJ8bQCaxlZBV1oceoMXrVMAim4LN4B2iq1hxw2Y2bLrAVYLrnoZhxre6wAAAABJRU5ErkJggg==" class="monster monster-b">
-
+                <div class="pixel-stars">✦ · ✦  · ✦</div>
+                <div class="monster-ground">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAAA8BAMAAAAj5X9CAAAALVBMVEUAAAAAAAAR0mMAq3gm/2YRdUIKQCQqLkU7Bxt4SDWGZ0bl3dOaflD/7B+CEDsgW3UxAAAAAnRSTlMAZtJCCVUAAAEcSURBVDjLtdOxSsRAEMbxU9DGxlT2kzvr48bzAby1l5PRysLCQREsLFywFwI+QcDWwjyBkFew1DKv4DPcN7sHKe7Kyb9YQvZXLNnJCPGMQopKHm3kAHbXu73xBnaABfdi4Q/kkhGNQzgXFM6Ip86g/a6q91aWRMfa/fkDa18r9CZ8qnpnQC4GAShPhSvo03sDsjRANAx4+s/AKhnBDAd4lta5eIKDVh9bXJO9ZyY0DmAYRTewJ5wSdB3jcwInZnjqA/JI5DLA79n9mqGJeIFs6o+f5tPOkwdDbjoqcWtuIMZo4KsWkfwxwZidgT7UMHiwkZiIzd5cHEGBjmJ8bQCaxlZBV1oceoMXrVMAim4LN4B2iq1hxw2Y2bLrAVYLrnoZhxre6wAAAABJRU5ErkJggg==" class="monster monster-b">
                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAABFBAMAAAAC1lMMAAAAMFBMVEUAAAAAAADQEgAAAADjQQCCEDthDCyhExpmLAA7BxuhRgD/dCn/rH//7B/ja0DjlD8dRtw1AAAAAnRSTlMAZtJCCVUAAAEWSURBVEjHzdIxSwMxFMDx6CA6KM3mWB6KH+BAdzlwcD7FTRTzARzMqltwFCzkG5TM3a5T197WuVOXTrf0A7TvJaSh0E4vhf6ncL+DJO9OhOCqxKArNuMqACDVw6YZAXTz6TER9Vg347q8h4wao9dy6okqYjSxB13GuHo+xefTiVcA/Qk4tHpAB8iu/lvTAZi6xBbxRjdavQFGi1fBVHHRtjNvd1p/qbA7LlC4emqqZx2yf4CqNW3KVkp9VNSLxedwXSkfT9OPFzQcIKx5msKN7H+1Lt2IreLM4r1wUGRPeB2+pmxPqfeiuFVxU76mnHPm17m+2Yt+i3aeU6XPGCMvjfmRspNH5dY6bD2Suzpc3dM0YtuIqSsTEmVJxCtbxgAAAABJRU5ErkJggg==" class="monster monster-a">
                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAABFCAMAAADQBC7EAAAAM1BMVEUAAAAAAAAAXL07uv8Ukv8kh94mpf8Ab+Xl3dNszvi9yfWb4vIANGEcje+vN/BLUtsAAADJddrVAAAAAnRSTlMAZtJCCVUAAAD7SURBVEjH7ZRLDsMgDEQDJDSU5nP/03bECMsVrZRu7C76FhE286KACJMm5zwrcmcaMHYkdGugrLWu61pKSSl5ORRSRxz4tUPNxVmWBd08sG2bo0OBiVXBTSelgRW6OBTO89z3XTRxsCp3B8JbJ8aYGki6OHeFdmKD59XYoQAwoTWU2FwKHMuSzBx8sVyFUcGOFuwd1vMro8DfG6Bj5ugLUcNrWtBn1MwhKI7jiAOPDmeRtHcIupDx5O4jylICf+eTg6uZDuArgLvDKB0cUETp8Gj+shNCcHFQ6/2lAziWfmhYOhzx0+V/1gOZCh075zL2DvhWsHTIxbSh8wTCHTC72dgnRQAAAABJRU5ErkJggg==" class="monster monster-c">
                     <span class="hit-effect hit-1">✦</span>
@@ -719,7 +746,6 @@ footer {
                 <div class="ground-line"></div>
             </div>
             
-
             <div id="passwordBox">
                 <input type="password" id="adminPwd" placeholder="보안 암호">
                 <button onclick="checkPassword()">확인</button>
@@ -751,6 +777,16 @@ footer {
                 <input type="text" id="inputComment" placeholder="예: 딸기야 물어~">
             </div>
             <button class="btn-submit" onclick="savePlayerRecord()">클라우드에 반영하기</button>
+
+            <!-- 백업 및 복구 (데이터 내보내기/불러오기) 섹션 -->
+            <div class="backup-section">
+                <label>📦 데이터 백업 및 복구 (JSON)</label>
+                <textarea id="backupTextarea" rows="4" placeholder="내보내기를 누르면 데이터가 여기에 표시됩니다. 또는 여기에 JSON을 붙여넣고 불러오기를 누르세요."></textarea>
+                <div class="backup-btns">
+                    <button class="btn-backup" onclick="exportData()">데이터 내보내기</button>
+                    <button class="btn-backup" onclick="importData()">데이터 불러오기(적용)</button>
+                </div>
+            </div>
         </div>
 
         <div class="card">
@@ -843,14 +879,11 @@ footer {
                 if (data.record && data.record.rankings && data.record.rankings.length > 0) {
                     rankings = data.record.rankings;
                     updatedAt = data.record.updatedAt || "2026/09/11 22:00";
-                    
-                    // 동점자 등수(공동 등수 및 다음 등수 밀어내기) 계산 반영
                     calculateRanks();
                 } else {
                     rankings = defaultRankings;
                     calculateRanks();
                     updatedAt = getFormattedDate();
-                    await saveRankingsToCloud();
                 }
                 
                 updateHeaderInfo();
@@ -866,17 +899,15 @@ footer {
             }
         }
 
-        // 동점자 공동 등수 및 다음 순번 밀어내기 계산 함수
         function calculateRanks() {
             rankings.sort((a, b) => b.score - a.score);
             let currentRank = 1;
             
             for (let i = 0; i < rankings.length; i++) {
                 if (i > 0 && rankings[i].score < rankings[i - 1].score) {
-                    currentRank = i + 1; // 점수가 낮아지면 현재 인덱스+1 등수로 설정 (공동 인원수만큼 밀려남)
+                    currentRank = i + 1;
                 }
                 
-                // 이전 순위가 없는 신규 유저라면 현재 등수로 초기화하여 기본 변동 계산 준비
                 if (rankings[i].prevRank === undefined) {
                     rankings[i].prevRank = currentRank;
                 }
@@ -886,12 +917,7 @@ footer {
 
         async function saveRankingsToCloud() {
             try {
-                // 중요:
-                // prevRank는 '이번 변경 직전 순위'를 의미하므로,
-                // 저장 직전에 현재 순위로 덮어쓰면 순위 변동 화살표가 사라집니다.
-                // prevRank는 savePlayerRecord()에서 변경 직전에 이미 백업합니다.
                 calculateRanks();
-
                 updatedAt = getFormattedDate();
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: 'PUT',
@@ -991,7 +1017,6 @@ footer {
 
             const selectedIdx = document.getElementById("selectPlayer").value;
 
-            // 수정 전 기존 순위 백업
             calculateRanks();
             let oldRanks = {};
             rankings.forEach(p => {
@@ -1006,8 +1031,6 @@ footer {
                     existing.link = link;
                     existing.comment = comment;
                 } else {
-                    // 신규 유저는 등록 직전 마지막 순위를 기준으로 시작합니다.
-                    // 이후 calculateRanks()에서 실제 현재 순위를 계산하여 변동 화살표를 표시합니다.
                     const defaultNewRank = rankings.length > 0
                         ? rankings[rankings.length - 1].calculatedRank
                         : 1;
@@ -1022,7 +1045,6 @@ footer {
                 rankings[idx].comment = comment;
             }
 
-            // 전체 유저 이전 순위 동기화
             rankings.forEach(p => {
                 if (oldRanks[p.name] !== undefined) {
                     p.prevRank = oldRanks[p.name];
@@ -1042,12 +1064,48 @@ footer {
             }
         }
 
+        function exportData() {
+            const backupObj = {
+                rankings: rankings,
+                updatedAt: updatedAt
+            };
+            const textarea = document.getElementById("backupTextarea");
+            textarea.value = JSON.stringify(backupObj, null, 2);
+            textarea.select();
+            document.execCommand('copy');
+            alert("현재 랭킹 데이터가 텍스트로 변환되었으며, 클립보드에 복사되었습니다!");
+        }
+
+        async function importData() {
+            const textarea = document.getElementById("backupTextarea").value.trim();
+            if (!textarea) {
+                alert("불러올 JSON 데이터가 비어 있습니다.");
+                return;
+            }
+            try {
+                const parsed = JSON.parse(textarea);
+                if (parsed && Array.isArray(parsed.rankings)) {
+                    if (confirm("붙여넣은 데이터로 랭킹을 교체하고 클라우드에 반영하시겠습니까?")) {
+                        rankings = parsed.rankings;
+                        updatedAt = parsed.updatedAt || getFormattedDate();
+                        calculateRanks();
+                        await saveRankingsToCloud();
+                        alert("데이터가 성공적으로 복구 및 반영되었습니다!");
+                    }
+                } else {
+                    alert("올바른 랭킹 JSON 형식이 아닙니다.");
+                }
+            } catch (e) {
+                alert("JSON 파싱 오류가 발생했습니다. 텍스트를 확인해 주세요.");
+            }
+        }
+
         function renderRankings() {
             const listEl = document.getElementById("rankingList");
             const searchKeyword = document.getElementById("searchInput").value.toLowerCase().trim();
             listEl.innerHTML = "";
 
-            calculateRanks(); // 렌더링 직전 공동 등수 재계산
+            calculateRanks();
 
             const filtered = rankings.map((player, originalIndex) => ({ ...player, originalIndex }))
                                       .filter(player => player.name.toLowerCase().includes(searchKeyword));
@@ -1058,7 +1116,7 @@ footer {
             }
 
             filtered.forEach((player) => {
-                const displayRank = player.calculatedRank; // 공동 등수 적용된 순위
+                const displayRank = player.calculatedRank;
                 let rankClass = "";
                 let rankStyleClass = `rank-${displayRank}`;
                 let commentClass = "";
@@ -1074,9 +1132,6 @@ footer {
                     commentClass = "comment-3";
                 }
 
-                // 순위 변동 비교
-                // prevRank = 이번 변경 직전 순위
-                // calculatedRank = 현재 점수 기준 순위
                 let diffHtml = `<span class="rank-diff diff-same" title="순위 변동 없음">-</span>`;
                 const previousRank = Number(player.prevRank);
                 const currentRank = Number(displayRank);
